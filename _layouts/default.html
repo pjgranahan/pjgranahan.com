@@ -15,23 +15,7 @@
     <div class="wrapper">
       <header>
         <h1>{{ site.title }}</h1>
-        <p>{{ site.description }}</p>
-
-        <figure class="avatar">
-          <img src="/assets/img/avatar.png" alt="Picture of Patrick Granahan" title="That's me, {{ site.author }}.">
-        </figure>
-
-        <nav>
-          <h6>You can find me on:</h6>
-          <ul>
-            {% if site.github %}
-              <li><a target="_blank" href="https://github.com/{{ site.github }}"><span class="icon-mark-github"></span>Github</a></li>
-            {% endif %}
-            {% if site.linkedin %}
-              <li><a target="_blank" href="https://www.linkedin.com/in/{{ site.linkedin }}"><span class="icon-linkedin"></span>LinkedIn</a></li>
-            {% endif %}
-          </ul>
-        </nav>
+        <p>{{ site.author-bio }}</p>
 
       </header>
       <section>
