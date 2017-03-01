@@ -7,7 +7,7 @@ title: "Patrick Granahan"
 description: "Patrick Granahan's website and blog"
 
 # "true" or "false" to indicate whether to provide a download URL
-show_downloads: "false"
+show_downloads: false
 
 # Your Google Analytics tracking ID
 google_analytics: UA-50072911-1
