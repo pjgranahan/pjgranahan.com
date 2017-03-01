@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ post.title | append: ' - ' | append: site.title }}</title>
+    <title>{{ page.title | append: ' - ' | append: site.title }}</title>
 
     <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
     <link rel="stylesheet" href="{{ /assets/css/post-style.css }}">
@@ -12,7 +12,8 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1>{{ page.title }}</h1>
+        <h1><a href="{{ site.url }}">{{ site.title }}</a></h1>
+        <h2>{{ page.title }}</h2>
         <aside>Posted on {{ page.date | date: "%B %-d, %Y" }}</aside>
       </header>
 
@@ -21,8 +22,7 @@
       </section>
 
       <footer>
-        <p>Back to the <a href="{{ site.url }}">homepage</a></p>
-        <p><small>View this page's history on <a href="{{ site.github-repo-url | append: /blob/master/_posts/ | append: {{ page.path }}">GitHub</a></small></p>
+        <p><small>View this page's <a href="{{ site.github-repo-url | append: '/commits/master/_posts/' | append: page.path }}">history</a></small></p>
       </footer>
     </div>
 
