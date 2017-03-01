@@ -28,6 +28,6 @@ author-bio: "Senior at Rice University. Bachelor of Science in Computer Science.
 url: "http://www.pjgranahan.com"
 
 # https://jekyllrb.com/docs/permalinks/
-permalink: /:title
+permalink: /:title/
 
 github-repo: https://github.com/pjgranahan/pjgranahan.com
