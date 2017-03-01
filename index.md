@@ -1,7 +1,6 @@
 ---
 layout: default
 ---
-
-{% for post in site.posts %}	
-    <a href="{{ post.url }}">{{ post.title }}</a>	
+{% for post in site.posts %}
+* [{{ post.title }}]({{ post.url }})
 {% endfor %}	
