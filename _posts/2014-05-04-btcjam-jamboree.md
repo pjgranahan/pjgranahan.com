@@ -1,8 +1,7 @@
 ---
-layout: default
+layout: post
 title: BTCJam Jamboree
 excerpt: "Visualizations of various aspects of BTCJam, including breakdowns of loan locations, durations, and amounts."
-modified: 2014-05-10
 tags: [bitcoin, btcjam, data visualization, tableau]
 comments: true
 ---
