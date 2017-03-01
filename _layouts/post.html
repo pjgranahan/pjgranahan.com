@@ -13,7 +13,7 @@
     <div class="wrapper">
       <header>
         <h1>{{ page.title }}</h1>
-        <aside>Posted on {{ page.date }}</aside>
+        <aside>Posted on {{ page.date | date: "%B %-d, %Y" }}</aside>
       </header>
 
       <section>
@@ -22,7 +22,7 @@
 
       <footer>
         <p>Back to the <a href="{{ site.url }}">homepage</a></p>
-        <p><small>View this page's history on <a href="{{ site.github-url | append: /blob/master/_posts/ | append: {{ page.path }}">GitHub</a></small></p>
+        <p><small>View this page's history on <a href="{{ site.github-repo-url | append: /blob/master/_posts/ | append: {{ page.path }}">GitHub</a></small></p>
       </footer>
     </div>
 

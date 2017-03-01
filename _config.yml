@@ -30,4 +30,4 @@ url: "http://www.pjgranahan.com"
 # https://jekyllrb.com/docs/permalinks/
 permalink: /:title/
 
-github-repo: https://github.com/pjgranahan/pjgranahan.com
+github-repo-url: https://github.com/pjgranahan/pjgranahan.com
