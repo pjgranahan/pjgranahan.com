@@ -1,0 +1,16 @@
+version: 0.1
+   
+phases:
+  install:
+    commands:
+      # Install nodejs (https://nodejs.org/en/download/package-manager/) (needed by jekyll)
+      - curl -sL https://deb.nodesource.com/setup_7.x | bash -
+      - apt-get install -y nodejs
+      # Install bundler and bundle install (https://github.com/github/pages-gem#usage)
+      - gem install bundler
+      - bundle install
+  build:
+    commands:
+      - bundle exec jekyll build
+      - aws s3 sync _site/ "s3://${BUCKET_NAME}" --delete --cache-control "max-age=86400" --exclude "assets/*"
+      - aws s3 sync _site/assets "s3://${BUCKET_NAME}/assets" --delete --cache-control "max-age=604800"

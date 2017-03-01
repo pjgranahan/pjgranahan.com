@@ -1,0 +1,932 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "pjgranahan.com CloudFormation Stack",
+  "Parameters": {
+    "DomainName": {
+      "Description": "The site domain name (non www).",
+      "Type": "String",
+      "AllowedPattern": "(?!-)[a-zA-Z0-9-.]{1,63}(?<![.-])",
+      "ConstraintDescription": "Must be a valid domain name."
+    },
+    "GitHubOwner": {
+      "Description": "GitHub account username.",
+      "Type": "String"
+    },
+    "GitHubRepo": {
+      "Description": "Static site repo name.",
+      "Type": "String"
+    },
+    "GitHubBranch": {
+      "Description": "The branch that will trigger build/deploy.",
+      "Type": "String",
+      "Default": "master"
+    },
+    "GitHubOAuthToken": {
+      "Description": "OAuth or personal access token.",
+      "Type": "String",
+      "NoEcho": true
+    }
+  },
+  "Mappings": {
+    "S3WebsiteMap": {
+      "us-east-1": {
+        "endpoint": "s3-website-us-east-1.amazonaws.com"
+      },
+      "us-east-2": {
+        "endpoint": "s3-website.us-east-2.amazonaws.com"
+      },
+      "us-west-1": {
+        "endpoint": "s3-website-us-west-1.amazonaws.com"
+      },
+      "us-west-2": {
+        "endpoint": "s3-website-us-west-2.amazonaws.com"
+      },
+      "ca-central-1": {
+        "endpoint": "s3-website.ca-central-1.amazonaws.com"
+      },
+      "ap-south-1": {
+        "endpoint": "s3-website.ap-south-1.amazonaws.com"
+      },
+      "ap-northeast-2": {
+        "endpoint": "s3-website.ap-northeast-2.amazonaws.com"
+      },
+      "ap-southeast-1": {
+        "endpoint": "s3-website-ap-southeast-1.amazonaws.com"
+      },
+      "ap-southeast-2": {
+        "endpoint": "s3-website-ap-southeast-2.amazonaws.com"
+      },
+      "ap-northeast-1": {
+        "endpoint": "s3-website-ap-northeast-1.amazonaws.com"
+      },
+      "eu-central-1": {
+        "endpoint": "s3-website.eu-central-1.amazonaws.com"
+      },
+      "eu-west-1": {
+        "endpoint": "s3-website-eu-west-1.amazonaws.com"
+      },
+      "eu-west-2": {
+        "endpoint": "s3-website.eu-west-2.amazonaws.com"
+      },
+      "sa-east-1": {
+        "endpoint": "s3-website-sa-east-1.amazonaws.com"
+      }
+    }
+  },
+  "Resources": {
+    "SSLCertificate": {
+      "Type": "AWS::CertificateManager::Certificate",
+      "Properties": {
+        "DomainName": {
+          "Ref": "DomainName"
+        },
+        "SubjectAlternativeNames": [
+          {
+            "Fn::Sub": "www.${DomainName}"
+          }
+        ],
+        "DomainValidationOptions": [
+          {
+            "DomainName": {
+              "Ref": "DomainName"
+            },
+            "ValidationDomain": {
+              "Ref": "DomainName"
+            }
+          },
+          {
+            "DomainName": {
+              "Fn::Sub": "www.${DomainName}"
+            },
+            "ValidationDomain": {
+              "Ref": "DomainName"
+            }
+          }
+        ]
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "f4b262d0-effb-4df4-9d52-a10c2df58ce9"
+        }
+      }
+    },
+    "WebAddress": {
+      "Type": "AWS::Route53::RecordSet",
+      "Properties": {
+        "AliasTarget": {
+          "HostedZoneId": "Z2FDTNDATAQYW2",
+          "DNSName": {
+            "Fn::Sub": "${CloudFront.DomainName}"
+          }
+        },
+        "Name": {
+          "Fn::Sub": "${DomainName}."
+        },
+        "Type": "A",
+        "HostedZoneName": {
+          "Fn::Sub": "${DomainName}."
+        }
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "b825439d-890c-49d2-b329-30b88c6c5b4d"
+        }
+      }
+    },
+    "WWWWebAddress": {
+      "Type": "AWS::Route53::RecordSet",
+      "Properties": {
+        "AliasTarget": {
+          "HostedZoneId": "Z2FDTNDATAQYW2",
+          "DNSName": {
+            "Fn::Sub": "${WWWCloudFront.DomainName}"
+          }
+        },
+        "Name": {
+          "Fn::Sub": "www.${DomainName}."
+        },
+        "Type": "A",
+        "HostedZoneName": {
+          "Fn::Sub": "${DomainName}."
+        }
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "1d22c69b-667c-4c93-af3c-e977eafe822c"
+        }
+      }
+    },
+    "CodeBuildRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Sid": "",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "codebuild.amazonaws.com"
+                ]
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Path": "/"
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "82689318-0697-40ee-991d-fcf0819953f8"
+        }
+      }
+    },
+    "CodeBuildRolePolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "CodeBuildRolePolicy",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/*"
+                }
+              ],
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Sub": "arn:aws:s3:::${ArtifactBucket}"
+                },
+                {
+                  "Fn::Sub": "arn:aws:s3:::${ArtifactBucket}/*"
+                },
+                {
+                  "Fn::Sub": "arn:aws:s3:::${StaticSiteBucket}"
+                },
+                {
+                  "Fn::Sub": "arn:aws:s3:::${StaticSiteBucket}/*"
+                }
+              ],
+              "Action": [
+                "s3:*"
+              ]
+            }
+          ]
+        },
+        "Roles": [
+          {
+            "Ref": "CodeBuildRole"
+          }
+        ]
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "6aafde5c-011d-4ce7-94a2-ebd97198da95"
+        }
+      }
+    },
+    "CodeBuild": {
+      "Type": "AWS::CodeBuild::Project",
+      "Properties": {
+        "Artifacts": {
+          "Type": "CODEPIPELINE"
+        },
+        "Environment": {
+          "ComputeType": "BUILD_GENERAL1_SMALL",
+          "Image": "aws/codebuild/ruby:2.3.1",
+          "Type": "LINUX_CONTAINER",
+          "EnvironmentVariables": [
+            {
+              "Name": "BUCKET_NAME",
+              "Value": {
+                "Ref": "StaticSiteBucket"
+              }
+            }
+          ]
+        },
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}-StaticSiteBuilder"
+        },
+        "ServiceRole": {
+          "Ref": "CodeBuildRole"
+        },
+        "Source": {
+          "Type": "CODEPIPELINE"
+        },
+        "Tags": [
+          {
+            "Key": "Stack",
+            "Value": {
+              "Ref": "AWS::StackName"
+            }
+          }
+        ],
+        "TimeoutInMinutes": 10
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "2d2389ee-7f94-4268-821d-3f4fb7c2e515"
+        }
+      }
+    },
+    "CodePipelineRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Sid": "",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "codepipeline.amazonaws.com"
+                ]
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Path": "/"
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "27c9a194-4245-4f86-a8e4-3cf94b38e310"
+        }
+      }
+    },
+    "CodePipelineRolePolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "CodePipelineRolePolicy",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject",
+                "s3:GetObjectVersion",
+                "s3:GetBucketVersioning"
+              ],
+              "Resource": "*",
+              "Effect": "Allow"
+            },
+            {
+              "Action": [
+                "s3:PutObject"
+              ],
+              "Resource": [
+                {
+                  "Fn::Sub": "arn:aws:s3:::${ArtifactBucket}"
+                },
+                {
+                  "Fn::Sub": "arn:aws:s3:::${ArtifactBucket}/*"
+                }
+              ],
+              "Effect": "Allow"
+            },
+            {
+              "Action": [
+                "codebuild:BatchGetBuilds",
+                "codebuild:StartBuild"
+              ],
+              "Resource": "*",
+              "Effect": "Allow"
+            }
+          ]
+        },
+        "Roles": [
+          {
+            "Ref": "CodePipelineRole"
+          }
+        ]
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "096c65f7-1181-4815-9ddd-36d5b946447b"
+        }
+      }
+    },
+    "CodePipeline": {
+      "Type": "AWS::CodePipeline::Pipeline",
+      "Properties": {
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "CodePipelineRole",
+            "Arn"
+          ]
+        },
+        "Stages": [
+          {
+            "Name": "Source",
+            "Actions": [
+              {
+                "Name": "SourceAction",
+                "ActionTypeId": {
+                  "Category": "Source",
+                  "Owner": "ThirdParty",
+                  "Version": "1",
+                  "Provider": "GitHub"
+                },
+                "OutputArtifacts": [
+                  {
+                    "Name": "StaticSiteSource"
+                  }
+                ],
+                "Configuration": {
+                  "Owner": {
+                    "Ref": "GitHubOwner"
+                  },
+                  "Repo": {
+                    "Ref": "GitHubRepo"
+                  },
+                  "Branch": {
+                    "Ref": "GitHubBranch"
+                  },
+                  "OAuthToken": {
+                    "Ref": "GitHubOAuthToken"
+                  }
+                },
+                "RunOrder": 1
+              }
+            ]
+          },
+          {
+            "Name": "Build",
+            "Actions": [
+              {
+                "Name": "CodeBuild",
+                "InputArtifacts": [
+                  {
+                    "Name": "StaticSiteSource"
+                  }
+                ],
+                "ActionTypeId": {
+                  "Category": "Build",
+                  "Owner": "AWS",
+                  "Version": "1",
+                  "Provider": "CodeBuild"
+                },
+                "OutputArtifacts": [
+                  {
+                    "Name": "StaticSite"
+                  }
+                ],
+                "Configuration": {
+                  "ProjectName": {
+                    "Ref": "CodeBuild"
+                  }
+                },
+                "RunOrder": 1
+              }
+            ]
+          }
+        ],
+        "ArtifactStore": {
+          "Type": "S3",
+          "Location": {
+            "Ref": "ArtifactBucket"
+          }
+        }
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "7e9f42de-32e9-410f-897c-a88808e599db"
+        }
+      }
+    },
+    "ArtifactBucket": {
+      "Type": "AWS::S3::Bucket",
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AccessControl": "Private"
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "cc066860-626d-42a8-8ddf-6caf2e3673ca"
+        }
+      }
+    },
+    "RedirectBucket": {
+      "Type": "AWS::S3::Bucket",
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AccessControl": "PublicRead",
+        "WebsiteConfiguration": {
+          "RedirectAllRequestsTo": {
+            "HostName": {
+              "Fn::Sub": "www.${DomainName}"
+            },
+            "Protocol": "https"
+          }
+        }
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "b1f37be6-89a5-4e82-ac23-46fab86c87fb"
+        }
+      }
+    },
+    "StaticSiteBucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "StaticSiteBucket"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Sub": "arn:aws:s3:::${StaticSiteBucket}/*"
+              },
+              "Principal": "*"
+            }
+          ]
+        }
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "a7f55d95-1a25-4f9a-994e-1a7af0eb7a76"
+        }
+      }
+    },
+    "StaticSiteBucket": {
+      "Type": "AWS::S3::Bucket",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "AccessControl": "PublicRead",
+        "WebsiteConfiguration": {
+          "IndexDocument": "index.html",
+          "ErrorDocument": "404/index.html"
+        }
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "1ec60a00-00c8-448d-9bae-632a5eff24a4"
+        }
+      }
+    },
+    "CloudFront": {
+      "Type": "AWS::CloudFront::Distribution",
+      "Properties": {
+        "DistributionConfig": {
+          "Aliases": [
+            {
+              "Ref": "DomainName"
+            }
+          ],
+          "CacheBehaviors": [],
+          "DefaultCacheBehavior": {
+            "AllowedMethods": [
+              "GET",
+              "HEAD",
+              "OPTIONS"
+            ],
+            "CachedMethods": [
+              "HEAD",
+              "GET",
+              "OPTIONS"
+            ],
+            "Compress": true,
+            "TargetOriginId": "S3Bucket",
+            "ForwardedValues": {
+              "QueryString": false,
+              "Cookies": {
+                "Forward": "none"
+              },
+              "Headers": []
+            },
+            "DefaultTTL": 0,
+            "MinTTL": 0,
+            "MaxTTL": 31536000,
+            "SmoothStreaming": false,
+            "ViewerProtocolPolicy": "redirect-to-https"
+          },
+          "Enabled": true,
+          "HttpVersion": "http2",
+          "Origins": [
+            {
+              "DomainName": {
+                "Fn::Sub": [
+                  "${RedirectBucket}.${Endpoint}",
+                  {
+                    "Endpoint": {
+                      "Fn::FindInMap": [
+                        "S3WebsiteMap",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        "endpoint"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "Id": "S3Bucket",
+              "CustomOriginConfig": {
+                "HTTPPort": 80,
+                "OriginProtocolPolicy": "http-only"
+              }
+            }
+          ],
+          "PriceClass": "PriceClass_All",
+          "ViewerCertificate": {
+            "SslSupportMethod": "sni-only",
+            "AcmCertificateArn": {
+              "Ref": "SSLCertificate"
+            }
+          }
+        }
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "42e1cca6-8644-47b9-a541-796af9631a75"
+        }
+      }
+    },
+    "WWWCloudFront": {
+      "Type": "AWS::CloudFront::Distribution",
+      "Properties": {
+        "DistributionConfig": {
+          "Aliases": [
+            {
+              "Fn::Sub": "www.${DomainName}"
+            }
+          ],
+          "CacheBehaviors": [
+            {
+              "AllowedMethods": [
+                "GET",
+                "HEAD",
+                "OPTIONS"
+              ],
+              "CachedMethods": [
+                "GET",
+                "HEAD",
+                "OPTIONS"
+              ],
+              "Compress": true,
+              "ForwardedValues": {
+                "QueryString": false,
+                "Cookies": {
+                  "Forward": "none"
+                },
+                "Headers": []
+              },
+              "DefaultTTL": 86400,
+              "MinTTL": 86400,
+              "MaxTTL": 31536000,
+              "ViewerProtocolPolicy": "redirect-to-https",
+              "PathPattern": "assets/*",
+              "SmoothStreaming": false,
+              "TargetOriginId": "S3Bucket"
+            }
+          ],
+          "DefaultCacheBehavior": {
+            "AllowedMethods": [
+              "GET",
+              "HEAD",
+              "OPTIONS"
+            ],
+            "CachedMethods": [
+              "HEAD",
+              "GET",
+              "OPTIONS"
+            ],
+            "Compress": true,
+            "TargetOriginId": "S3Bucket",
+            "ForwardedValues": {
+              "QueryString": false,
+              "Cookies": {
+                "Forward": "none"
+              },
+              "Headers": []
+            },
+            "DefaultTTL": 0,
+            "MinTTL": 0,
+            "MaxTTL": 31536000,
+            "SmoothStreaming": false,
+            "ViewerProtocolPolicy": "redirect-to-https"
+          },
+          "Enabled": true,
+          "HttpVersion": "http2",
+          "Origins": [
+            {
+              "DomainName": {
+                "Fn::Sub": [
+                  "${StaticSiteBucket}.${Endpoint}",
+                  {
+                    "Endpoint": {
+                      "Fn::FindInMap": [
+                        "S3WebsiteMap",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        "endpoint"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "Id": "S3Bucket",
+              "CustomOriginConfig": {
+                "HTTPPort": 80,
+                "OriginProtocolPolicy": "http-only"
+              }
+            }
+          ],
+          "PriceClass": "PriceClass_All",
+          "ViewerCertificate": {
+            "SslSupportMethod": "sni-only",
+            "AcmCertificateArn": {
+              "Ref": "SSLCertificate"
+            }
+          }
+        }
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "d2ee6458-43e1-4f7c-a426-9d4adf71694c"
+        }
+      }
+    }
+  },
+  "Outputs": {},
+  "Metadata": {
+    "AWS::CloudFormation::Designer": {
+      "1ec60a00-00c8-448d-9bae-632a5eff24a4": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": 690,
+          "y": 370
+        },
+        "z": 1,
+        "embeds": []
+      },
+      "a7f55d95-1a25-4f9a-994e-1a7af0eb7a76": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": 690,
+          "y": 470
+        },
+        "z": 1,
+        "embeds": [],
+        "isassociatedwith": [
+          "1ec60a00-00c8-448d-9bae-632a5eff24a4"
+        ]
+      },
+      "b1f37be6-89a5-4e82-ac23-46fab86c87fb": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": 490,
+          "y": 370
+        },
+        "z": 1,
+        "embeds": []
+      },
+      "cc066860-626d-42a8-8ddf-6caf2e3673ca": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": 590,
+          "y": 370
+        },
+        "z": 1,
+        "embeds": []
+      },
+      "27c9a194-4245-4f86-a8e4-3cf94b38e310": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": 590,
+          "y": 160
+        },
+        "z": 1,
+        "embeds": []
+      },
+      "096c65f7-1181-4815-9ddd-36d5b946447b": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": 590,
+          "y": 60
+        },
+        "z": 1,
+        "embeds": [],
+        "isassociatedwith": [
+          "27c9a194-4245-4f86-a8e4-3cf94b38e310"
+        ]
+      },
+      "82689318-0697-40ee-991d-fcf0819953f8": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": 690,
+          "y": 160
+        },
+        "z": 1,
+        "embeds": []
+      },
+      "2d2389ee-7f94-4268-821d-3f4fb7c2e515": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": 690,
+          "y": 270
+        },
+        "z": 1,
+        "embeds": [],
+        "isrelatedto": [
+          "1ec60a00-00c8-448d-9bae-632a5eff24a4",
+          "82689318-0697-40ee-991d-fcf0819953f8"
+        ]
+      },
+      "7e9f42de-32e9-410f-897c-a88808e599db": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": 590,
+          "y": 270
+        },
+        "z": 1,
+        "embeds": [],
+        "isrelatedto": [
+          "27c9a194-4245-4f86-a8e4-3cf94b38e310",
+          "2d2389ee-7f94-4268-821d-3f4fb7c2e515",
+          "cc066860-626d-42a8-8ddf-6caf2e3673ca"
+        ]
+      },
+      "6aafde5c-011d-4ce7-94a2-ebd97198da95": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": 690,
+          "y": 60
+        },
+        "z": 1,
+        "embeds": [],
+        "isassociatedwith": [
+          "82689318-0697-40ee-991d-fcf0819953f8"
+        ]
+      },
+      "1d22c69b-667c-4c93-af3c-e977eafe822c": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": 290,
+          "y": 310
+        },
+        "z": 0,
+        "embeds": []
+      },
+      "b825439d-890c-49d2-b329-30b88c6c5b4d": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": 290,
+          "y": 230
+        },
+        "z": 0,
+        "embeds": []
+      },
+      "f4b262d0-effb-4df4-9d52-a10c2df58ce9": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": 490,
+          "y": 270
+        },
+        "z": 1,
+        "embeds": []
+      },
+      "d2ee6458-43e1-4f7c-a426-9d4adf71694c": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": 380,
+          "y": 310
+        },
+        "z": 1,
+        "embeds": [],
+        "isrelatedto": [
+          "f4b262d0-effb-4df4-9d52-a10c2df58ce9"
+        ]
+      },
+      "42e1cca6-8644-47b9-a541-796af9631a75": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": 380,
+          "y": 230
+        },
+        "z": 1,
+        "embeds": [],
+        "isrelatedto": [
+          "f4b262d0-effb-4df4-9d52-a10c2df58ce9"
+        ]
+      },
+      "de809037-b6ca-4994-9514-7def793df6e2": {
+        "source": {
+          "id": "1d22c69b-667c-4c93-af3c-e977eafe822c"
+        },
+        "target": {
+          "id": "04182ec4-3c32-4d56-b68c-7a577764fc28"
+        },
+        "z": 2
+      },
+      "9d4de5e0-fe00-4dfc-b0e5-eee81c347003": {
+        "source": {
+          "id": "b825439d-890c-49d2-b329-30b88c6c5b4d"
+        },
+        "target": {
+          "id": "04182ec4-3c32-4d56-b68c-7a577764fc28"
+        },
+        "z": 3
+      }
+    }
+  }
+}
