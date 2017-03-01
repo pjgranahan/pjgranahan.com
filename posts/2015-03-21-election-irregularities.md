@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: default
 title: Detecting Election Irregularities in Texas Counties
 excerpt: "Using Benford’s Law to Analyze Voting Methods and County Clerk Partisanship"
 tags: [texas, county, detection, detecting, detect, election, irregularities, partisanship, benford's, law, benford, data, visualization, tableau]

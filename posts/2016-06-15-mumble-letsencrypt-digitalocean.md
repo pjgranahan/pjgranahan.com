@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: default
 title: Installing a Let's Encrypt certificate on a Digital Ocean One-Click Mumble server
 modified: 2016-06-15
 tags: [mumble server, murmur, let's encrypt, digital ocean, certificate]
