@@ -12,5 +12,4 @@ phases:
   build:
     commands:
       - bundle exec jekyll build
-      - aws s3 sync _site/ "s3://${BUCKET_NAME}" --delete --cache-control "max-age=86400" --exclude "assets/*"
-      - aws s3 sync _site/assets "s3://${BUCKET_NAME}/assets" --delete --cache-control "max-age=604800"
+      - aws s3 sync _site/ "s3://${BUCKET_NAME}" --delete

@@ -6,27 +6,24 @@
     <title>{{ page.title | append: ' - ' | append: site.title }}</title>
 
     <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
-    <link rel="stylesheet" href="{{ /assets/css/post-style.css }}">
   </head>
 
   <body>
-    <sidebar>
+    <div class="wrapper">
       <header>
         <h1><a href="{{ site.url }}">{{ site.title }}</a></h1>
         <h2>{{ page.title }}</h2>
         <aside>Posted on {{ page.date | date: "%B %-d, %Y" }}</aside>
       </header>
 
-      <spacer></spacer>
+      <section>
+      {{ content }}
+      </section>
 
       <footer>
         <p><small>View this page's <a href="{{ site.github-repo-url | append: '/commits/master/_posts/' | append: page.path }}">history</a></small></p>
       </footer>
-    </sidebar>
-
-    <section>
-      {{ content }}
-    </section>
+    </div>
 
   {% if site.google_analytics %}
     <script>
