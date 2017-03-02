@@ -10,21 +10,23 @@
   </head>
 
   <body>
-    <div class="wrapper">
+    <sidebar>
       <header>
         <h1><a href="{{ site.url }}">{{ site.title }}</a></h1>
         <h2>{{ page.title }}</h2>
         <aside>Posted on {{ page.date | date: "%B %-d, %Y" }}</aside>
       </header>
 
-      <section>
-      {{ content }}
-      </section>
+      <spacer></spacer>
 
       <footer>
         <p><small>View this page's <a href="{{ site.github-repo-url | append: '/commits/master/_posts/' | append: page.path }}">history</a></small></p>
       </footer>
-    </div>
+    </sidebar>
+
+    <section>
+      {{ content }}
+    </section>
 
   {% if site.google_analytics %}
     <script>
