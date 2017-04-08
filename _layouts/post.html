@@ -1,7 +1,8 @@
 <!doctype html>
 <html>
 
-{% include header.html title=page.title | append: ' - ' | append: site.title %}
+{% capture pageTitle %} {{page.title | append: ' - ' | append: site.title}} {% endcapture %}
+{% include header.html title=pageTitle %}
 
 <body>
 <div class="wrapper">

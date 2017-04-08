@@ -8,7 +8,8 @@ phases:
       - apt-get install -y nodejs
       # Install bundler and bundle install (https://github.com/github/pages-gem#usage)
       - gem install bundler
-      - bundle install
+      # Speeds up nokogiri install by disabling redundant work (http://awesomism.co.uk/nokogiri-slow-install/)
+      - env NOKOGIRI_USE_SYSTEM_LIBRARIES=true bundle install
   build:
     commands:
       - bundle exec jekyll build
