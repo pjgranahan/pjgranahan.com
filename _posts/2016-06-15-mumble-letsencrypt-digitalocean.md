@@ -10,30 +10,31 @@ To set up a signed certificate from [Let's Encrypt][3] on a [Mumble][1] server (
 * Log in to your droplet
 
 * Git clone Let's Encrypt and install a cert (adapted from [this reddit thread][4]):
-{% highlight js %}
-~# git clone https://github.com/letsencrypt/letsencrypt
-~# cd letsencrypt
-~/letsencrypt# ./letsencrypt-auto certonly --standalone  #and follow instructions
-{% endhighlight %}
+```console
+git clone https://github.com/letsencrypt/letsencrypt
+letsencrypt/letsencrypt-auto certonly --standalone
+# Then follow the instructions
+```
 
 * Open the Mumble Server (murmur) config file and change the SSL options to point to your newly generated certs:
-{% highlight js %}
+```console
 ~/letsencrypt# nano /etc/mumble-server.ini
-{% endhighlight %}
-{% highlight js %}
+```
+```console
 sslCert=/etc/letsencrypt/live/<your.domain.here>/fullchain.pem
 sslKey=/etc/letsencrypt/live/<your.domain.here>/privkey.pem
-{% endhighlight %}
+```
 
 * "In order for mumble-server to read the LetsEncrypt certificates you must have granted mumble-server 'higher priority' during the initial wizard setup" [source][5]. So, run:
-{% highlight js %}
-dpkg-reconfigure mumble-server  #and follow instructions, setting mumble with high priority
-{% endhighlight %}
+```console
+dpkg-reconfigure mumble-server
+# Follow instructions, setting mumble with high priority
+```
 
 * Restart:
-{% highlight js %}
+```console
 service mumble-server restart
-{% endhighlight %}
+```
 
 * Done! Now, when users connect to your server, they should not be warned that your certs are self-signed.
 
