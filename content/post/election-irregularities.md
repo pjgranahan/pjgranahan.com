@@ -1,9 +1,7 @@
 ---
-layout: post
 title: Detecting Election Irregularities in Texas Counties
-excerpt: "Using Benford’s Law to Analyze Voting Methods and County Clerk Partisanship"
-tags: [texas, county, detection, detecting, detect, election, irregularities, partisanship, benford's, law, benford, data, visualization, tableau]
-comments: true
+description: "Using Benford’s Law to Analyze Voting Methods and County Clerk Partisanship"
+date: 2015-03-21
 ---
 
 Last semester I took [Election Systems][4], a course cross-listed between the computer science, psychology, and political science departments at Rice. The course looks at elections, how they are conducted, and the challenges involved with ensuring security, usability, and fairness, from the perspective of each discipline.

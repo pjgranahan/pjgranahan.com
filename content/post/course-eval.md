@@ -1,9 +1,7 @@
 ---
-layout: post
 title: Rice University Course and Instructor Evaluation Visualization
-excerpt: "The interactive visualization below plots average course workload per department and per course over the past 14 semesters."
-tags: [rice, university, course, and, instructor, evaluation, data, visualization, tableau]
-comments: true
+description: "An interactive visualization, plotting average course workload per department and per course at Rice University from 2007 through 2013."
+date: 2014-04-27
 ---
 
 This is the first of a few visualizations and analyses on the Rice University Course and Instructor Evaluation data that I plan to publish.

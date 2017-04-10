@@ -1,0 +1,111 @@
+/* Grid areas */
+#homeHeader {
+    grid-area: homeHeader;
+}
+
+#homeList {
+    grid-area: homeList;
+}
+
+#postHeader {
+    grid-area: postHeader;
+    background-color: ghostwhite;
+    border: 1px double #000000;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+#postContent {
+    grid-area: postContent;
+}
+
+/*Mobile first layout*/
+#index {
+    display: grid;
+    grid-template-areas: "homeHeader" "homeList";
+}
+
+#post {
+    display: grid;
+    grid-template-areas: "postHeader" "postContent";
+}
+
+/* Desktop layout */
+@media only screen and (min-width: 666px) {
+    #index {
+        grid-template-areas: "homeHeader homeList";
+        grid-template-columns: 40% 60%;
+    }
+
+    #homeHeader {
+        justify-self: end;
+    }
+
+    #homeList {
+        justify-self: start;
+    }
+
+    #post {
+        display: grid;
+        grid-template-areas: ". postHeader . . ." ". postContent postContent . .";
+        grid-template-columns: 1fr 666px 1fr 1fr 1fr;
+    }
+}
+
+@media only screen and (min-width: 950px) {
+    #index {
+        grid-template-columns: 50% 50%;
+    }
+}
+
+/* Style */
+body {
+    font: 14px/1.5 Helvetica, Arial, sans-serif;
+}
+
+h1, h2, h3 {
+    line-height: 1;
+}
+
+a {
+    color: #39c;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #069;
+}
+
+.postLi {
+    padding-top: 6px;
+}
+
+small {
+    font-size: 12px;
+}
+
+/* Code highlighting style. See https://monicagranbois.com/blog/webdev/formatting-code-with-pygments-and-jekyll/ */
+.linenodiv pre {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    color: darkgray;
+    border-right: solid 1px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: center;
+}
+
+.code .highlight pre {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    background-color: #f0f0f0;
+}
+
+.highlighttable {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 5px;
+
+    display: block;
+}

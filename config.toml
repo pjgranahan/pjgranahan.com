@@ -1,0 +1,26 @@
+# hostname (and path) to the root, e.g. http://spf13.com/
+baseURL = "https://www.pjgranahan.com"
+
+# google analytics tracking id
+googleAnalytics = "UA-50072911-1"
+
+title = "Patrick Granahan"
+
+enableGitInfo = true
+
+pygmentsCodeFences = true
+pygmentsUseClasses = true
+pygmentsCodeFencesGuessSyntax = true
+
+[permalinks]
+  post = "/:filename/"
+
+[params]
+  # social media account handles
+  Github = "pjgranahan"
+  Linkedin = "pjgranahan"
+
+  # A short presentation of yourself. Will show in the sidebar, under your name. Best usage would be between 30 to 50 words.
+  AuthorBio = "Senior at Rice University. Bachelor of Science in Computer Science."
+
+  GithubRepoUrl = "https://github.com/pjgranahan/pjgranahan.com"
