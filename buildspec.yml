@@ -1,0 +1,10 @@
+version: 0.1
+
+phases:
+  install:
+    commands:
+      - snap install hugo
+  build:
+    commands:
+      - hugo
+      - aws s3 sync _site/ "s3://${BUCKET_NAME}" --delete
