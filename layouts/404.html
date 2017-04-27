@@ -1,1 +1,11 @@
-404!
+{{ partial "header.html" . }}
+
+<div id="index">
+    <header id="homeHeader">
+        <h1><a href="{{ .Site.BaseURL }}">{{ .Site.Title }}</a></h1>
+        <p>404, that page doesn't exist!</p>
+        <p>I probably broke something while I was messing with the site, sorry.</p>
+    </header>
+</div>
+
+{{ partial "footer.html" . }}
