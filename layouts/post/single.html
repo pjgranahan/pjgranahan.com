@@ -4,8 +4,10 @@
     <header id="postHeader">
         <h1><a href="{{ .Site.BaseURL }}">{{ .Site.Title }}</a></h1>
         <h2>{{ .Page.Title }}</h2>
-        <aside>Posted {{ .Date.Format "January 2, 2006" }}
-            | <a href='{{ printf "%s%s%s" .Site.Params.GithubRepoUrl "/commits/master" .URL }}'>Last edited {{ .Page.GitInfo.AuthorDate.Format "January 2, 2006" }}</a>
+        <aside>Posted {{ .Date.Format "January 2, 2006" }} |
+            <a href='{{ printf "%s%s%s" .Site.Params.GithubRepoUrl "/commits/master/content/post/" .File.LogicalName }}'>
+                Last edited {{ .Page.GitInfo.AuthorDate.Format "January 2, 2006" }}
+            </a>
         </aside>
     </header>
 
