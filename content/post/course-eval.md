@@ -12,11 +12,11 @@ The "average course workload" metric is gauged by Rice students' scaled response
 
 
 > The workload for this course compared to others at Rice was:
-	1. Much Lighter
-	2. Somewhat Lighter
-	3. Average
-	4. Somewhat Heavier
-	5. Much Heavier
+> 1. Much Lighter
+> 2. Somewhat Lighter
+> 3. Average
+> 4. Somewhat Heavier
+> 5. Much Heavier
 
 The interactive visualization below plots average course workload per department and per course over the past 14 semesters. You can filter the plots by department (e.g. COMP), course (e.g. COMP 182), year, semester, as well as the number of ratings a given department or course received. Additionally, by hovering over different columns and rows, you can sort the plots in different ways (i.e. ascending, descending, alphabetical). I encourage you to play around with the visualization, and to contact me if you have any questions.
 
