@@ -20,7 +20,8 @@ pygmentsCodeFencesGuessSyntax = true
   Github = "pjgranahan"
   Linkedin = "pjgranahan"
 
-  # A short presentation of yourself. Will show in the sidebar, under your name. Best usage would be between 30 to 50 words.
   AuthorBio = "Senior at Rice University. Bachelor of Science in Computer Science."
 
   GithubRepoUrl = "https://github.com/pjgranahan/pjgranahan.com"
+
+  GoogleInvisibleRecaptchaSiteKey = "6LcrUSAUAAAAAIiMzkDMrSiXT4OHE5tAXnVo8W4P"

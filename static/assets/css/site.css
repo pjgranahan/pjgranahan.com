@@ -1,6 +1,20 @@
 /* Grid areas */
 #homeHeader {
     grid-area: homeHeader;
+    background-color: ghostwhite;
+    border: 1px double #000000;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+#homeHeader h1 {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#homeHeader p {
+    margin-top: 0px;
+    margin-bottom: 5px;
 }
 
 #homeList {

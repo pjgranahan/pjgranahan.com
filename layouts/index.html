@@ -4,6 +4,12 @@
     <header id="homeHeader">
         <h1>{{ .Site.Title }}</h1>
         <p>{{ .Site.Params.AuthorBio }}</p>
+        <p>
+        <form id='contact-form' action="?" method="POST">
+            <button class="g-recaptcha" data-sitekey="{{ .Site.Params.GoogleInvisibleRecaptchaSiteKey }}" data-callback='onSubmit'>Submit</button>
+            <br/>
+        </form>
+        </p>
     </header>
 
     <ul id="homeList">
