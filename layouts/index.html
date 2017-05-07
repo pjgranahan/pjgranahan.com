@@ -5,7 +5,7 @@
         <h1>{{ .Site.Title }}</h1>
         <p>{{ .Site.Params.AuthorBio }}</p>
         <p>
-        <form id='contact-form' action="?" method="POST">
+        <form id='contact-form' action="https://api.pjgranahan.com/site/recaptcha/verify" method="POST">
             <button class="g-recaptcha" data-sitekey="{{ .Site.Params.GoogleInvisibleRecaptchaSiteKey }}" data-callback='onSubmit'>Submit</button>
             <br/>
         </form>
