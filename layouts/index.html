@@ -5,11 +5,12 @@
         <h1>{{ .Site.Title }}</h1>
         <p>{{ .Site.Params.AuthorBio }}</p>
         <p>
-        <form id='contact-form' action="https://api.pjgranahan.com/site/recaptcha/verify" method="POST">
-            <button class="g-recaptcha" data-sitekey="{{ .Site.Params.GoogleInvisibleRecaptchaSiteKey }}" data-callback='onSubmit'>Submit</button>
-            <br/>
-        </form>
         </p>
+        <div class="g-recaptcha"
+             data-sitekey="{{ .Site.Params.RecaptchaSiteKey }}"
+             data-callback="onSuccessfulValidation"
+             data-size="invisible">
+        </div>
     </header>
 
     <ul id="homeList">

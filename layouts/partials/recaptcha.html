@@ -1,0 +1,27 @@
+<!-- Google Invisible reCaptcha - (order matters: https://developers.google.com/recaptcha/docs/invisible#programmatic_execute) -->
+<script>
+    function invokeChallenge(token) {
+        grecaptcha.execute();
+    }
+    function onSuccessfulValidation(token) {
+        alert(token);
+
+        // Adapted from http://stackoverflow.com/a/9713078/3394807
+        var http = new XMLHttpRequest();
+        var url = "https://api.pjgranahan.com/site/recaptcha/verify";
+        var body = JSON.stringify({"g-captcha-response": token});
+        http.open("POST", url, true);
+
+        //Send the proper header information along with the request
+        http.setRequestHeader("Content-type", "application/json");
+
+        http.onreadystatechange = function() {//Call a function when the state changes.
+            if(http.readyState == 4 && http.status == 200) {
+                alert(http.responseText);
+            }
+        };
+        http.send(body);
+    }
+</script>
+<script src="https://www.google.com/recaptcha/api.js" async defer onload="invokeChallenge"></script>
+
