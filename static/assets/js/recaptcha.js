@@ -1,0 +1,36 @@
+function invokeChallenge() {
+    alert("invoking challenge");
+
+    grecaptcha.execute();
+}
+function onSuccessfulValidation(token) {
+    alert(token);
+
+    // Adapted from http://stackoverflow.com/a/9713078/3394807
+    var http = new XMLHttpRequest();
+    var url = "https://api.pjgranahan.com/site/recaptcha/verify";
+    var body = JSON.stringify({"g-captcha-response": token});
+    http.open("POST", url, true);
+
+    //Send the proper header information along with the request
+    http.setRequestHeader("Content-type", "application/json");
+
+    http.onreadystatechange = function() {//Call a function when the state changes.
+        if(http.readyState == 4 && http.status == 200) {
+            alert(http.responseText);
+            // Parse response to JSON
+            var contactInfo = JSON.parse(http.responseText);
+
+            // Grab email address 'a' tag and populate its link and text
+            var emailAddressLink = document.getElementById('email_address');
+            emailAddressLink.href = "mailto:" + contactInfo.email_address;
+            emailAddressLink.innerHTML = contactInfo.email_address;
+
+            // Grab phone number 'a' tag and populate its link and text
+            var phoneNumberLink = document.getElementById('phone_number');
+            phoneNumberLink.href = "tel:" + contactInfo.phone_number;
+            phoneNumberLink.innerHTML = contactInfo.phone_number;
+        }
+    };
+    http.send(body);
+}
