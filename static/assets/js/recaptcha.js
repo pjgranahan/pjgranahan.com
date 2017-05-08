@@ -47,12 +47,16 @@ function substituteContactInfo(contactInfo) {
 
 // Check for contact info request clicks
 window.addEventListener("load", function () {
-    // Check if contact info exists in cookies
     var contactInfoCookie = Cookies.getJSON(CONTACT_INFO_COOKIE_NAME);
+
+    // Check if contact info exists in cookies
     if (contactInfoCookie === undefined) {
+        // If it does not, show the contactInfoRequest link
         var contactInfoRequest = document.getElementById("contactInfoRequest");
         contactInfoRequest.onclick = invokeChallenge;
+        document.getElementById("contactInfoRequest").removeAttribute('hidden');
     } else {
+        // If it does, populate the contact info and show it
         substituteContactInfo(contactInfoCookie)
     }
 });
