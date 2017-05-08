@@ -18,7 +18,6 @@ function onSuccessfulValidation(token) {
 
     http.onreadystatechange = function() {//Call a function when the state changes.
         if(http.readyState == 4 && http.status == 200) {
-            alert(http.responseText);
             var contactInfo = JSON.parse(http.responseText);
             Cookies.set(CONTACT_INFO_COOKIE_NAME, contactInfo, { expires: 7, path: '', domain: 'www.pjgranahan.com', secure: true });
             substituteContactInfo(contactInfo);
@@ -41,6 +40,9 @@ function substituteContactInfo(contactInfo) {
     // Remove the contact info request link and the recaptcha widget (adapted from: http://stackoverflow.com/a/19298575/3394807)
     document.getElementById("contactInfoRecaptcha").outerHTML='';
     document.getElementById("contactInfoRequest").outerHTML='';
+
+    // Make the contact info paragraph visible
+    document.getElementById("contactInfo").removeAttribute('hidden');
 }
 
 // Check for contact info request clicks
@@ -48,8 +50,8 @@ window.addEventListener("load", function () {
     // Check if contact info exists in cookies
     var contactInfoCookie = Cookies.getJSON(CONTACT_INFO_COOKIE_NAME);
     if (contactInfoCookie === undefined) {
-        var contactInfo = document.getElementById("contactInfoRequest");
-        contactInfo.onclick = invokeChallenge;
+        var contactInfoRequest = document.getElementById("contactInfoRequest");
+        contactInfoRequest.onclick = invokeChallenge;
     } else {
         substituteContactInfo(contactInfoCookie)
     }
