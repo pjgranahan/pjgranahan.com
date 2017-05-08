@@ -1,10 +1,13 @@
+var CONTACT_INFO_COOKIE_NAME = "contactInfo";
+var RECAPTCHA_SITEKEY = "6LeRgiAUAAAAADyHra3UqyHvPvoXTWRItTz8a3Hj";
+
 function invokeChallenge() {
     alert("invoking challenge");
 
     // Check if contact info exists in cookies
     var contactInfo = Cookies.getJSON(CONTACT_INFO_COOKIE_NAME);
     if (contactInfo === undefined) {
-        grecaptcha.render("contactInfo", {sitekey: "{{ .Site.Params.RecaptchaSiteKey }}", size: "compact", callback: "onSuccessfulValidation"});
+        grecaptcha.render("contactInfo", {sitekey: RECAPTCHA_SITEKEY, size: "compact", callback: "onSuccessfulValidation"});
     } else {
         substituteContactInfo(contactInfo)
     }
@@ -46,8 +49,6 @@ function substituteContactInfo(contactInfo) {
     phoneNumberLink.href = "tel:" + contactInfo.phone_number;
     phoneNumberLink.innerHTML = contactInfo.phone_number;
 }
-
-var CONTACT_INFO_COOKIE_NAME = "contactInfo";
 
 window.addEventListener("load", function () {
     var contactInfo = document.getElementById("contactInfoClick");
