@@ -1,10 +1,3 @@
-var CONTACT_INFO_COOKIE_NAME = "contactInfo";
-
-window.onload = function () {
-    var contactInfo = document.getElementById("contactInfo");
-    contactInfo.onclick = invokeChallenge;
-};
-
 function invokeChallenge() {
     alert("invoking challenge");
 
@@ -53,3 +46,10 @@ function substituteContactInfo(contactInfo) {
     phoneNumberLink.href = "tel:" + contactInfo.phone_number;
     phoneNumberLink.innerHTML = contactInfo.phone_number;
 }
+
+var CONTACT_INFO_COOKIE_NAME = "contactInfo";
+
+window.onload = function () {
+    var contactInfo = document.getElementById("contactInfo");
+    contactInfo.onclick = invokeChallenge;
+};
