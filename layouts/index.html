@@ -4,7 +4,10 @@
     <header id="homeHeader">
         <h1>{{ .Site.Title }}</h1>
         <p>{{ .Site.Params.AuthorBio }}</p>
-        <p><a id="email_address">Email address</a> | <a id="phone_number">Phone number</a></p>
+        <p><a id="contactInfo">Click to see contact info</a></p>
+        <p>
+            <a id="email_address">Email address</a> | <a id="phone_number">Phone number</a>
+        </p>
     </header>
 
     <ul id="homeList">
@@ -14,11 +17,6 @@
     </ul>
 </div>
 
-<!-- For use with Google Invisible reCaptcha -->
-<div class="g-recaptcha"
-     data-sitekey="{{ .Site.Params.RecaptchaSiteKey }}"
-     data-callback="onSuccessfulValidation"
-     data-size="invisible">
-</div>
+
 
 {{ partial "footer.html" . }}
