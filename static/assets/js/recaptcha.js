@@ -49,7 +49,7 @@ function substituteContactInfo(contactInfo) {
 
 var CONTACT_INFO_COOKIE_NAME = "contactInfo";
 
-window.onload = function () {
-    var contactInfo = document.getElementById("contactInfo");
+window.addEventListener("load", function () {
+    var contactInfo = document.getElementById("contactInfoClick");
     contactInfo.onclick = invokeChallenge;
-};
+});
