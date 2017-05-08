@@ -2,22 +2,11 @@ var CONTACT_INFO_COOKIE_NAME = "contactInfo";
 var RECAPTCHA_SITEKEY = "6LeRgiAUAAAAADyHra3UqyHvPvoXTWRItTz8a3Hj";
 
 function invokeChallenge() {
-    alert("invoking challenge");
-
-    // Check if contact info exists in cookies
-    var contactInfo = Cookies.getJSON(CONTACT_INFO_COOKIE_NAME);
-    if (contactInfo === undefined) {
-        grecaptcha.render("contactInfo", {sitekey: RECAPTCHA_SITEKEY, size: "compact", callback: "onSuccessfulValidation"});
-    } else {
-        substituteContactInfo(contactInfo)
-    }
-
+    grecaptcha.render("contactInfoRecaptcha", {sitekey: RECAPTCHA_SITEKEY, size: "compact", callback: "onSuccessfulValidation"});
     return false;
 }
 
 function onSuccessfulValidation(token) {
-    alert(token);
-
     // Adapted from http://stackoverflow.com/a/9713078/3394807
     var http = new XMLHttpRequest();
     var url = "https://api.pjgranahan.com/site/recaptcha/verify";
@@ -39,7 +28,7 @@ function onSuccessfulValidation(token) {
 }
 
 function substituteContactInfo(contactInfo) {
-        // Grab email address 'a' tag and populate its link and text
+    // Grab email address 'a' tag and populate its link and text
     var emailAddressLink = document.getElementById('email_address');
     emailAddressLink.href = "mailto:" + contactInfo.email_address;
     emailAddressLink.innerHTML = contactInfo.email_address;
@@ -48,9 +37,20 @@ function substituteContactInfo(contactInfo) {
     var phoneNumberLink = document.getElementById('phone_number');
     phoneNumberLink.href = "tel:" + contactInfo.phone_number;
     phoneNumberLink.innerHTML = contactInfo.phone_number;
+
+    // Remove the contact info request link and the recaptcha widget (adapted from: http://stackoverflow.com/a/19298575/3394807)
+    document.getElementById("contactInfoRecaptcha").outerHTML='';
+    document.getElementById("contactInfoRequest").outerHTML='';
 }
 
+// Check for contact info request clicks
 window.addEventListener("load", function () {
-    var contactInfo = document.getElementById("contactInfoClick");
-    contactInfo.onclick = invokeChallenge;
+    // Check if contact info exists in cookies
+    var contactInfoCookie = Cookies.getJSON(CONTACT_INFO_COOKIE_NAME);
+    if (contactInfoCookie === undefined) {
+        var contactInfo = document.getElementById("contactInfoRequest");
+        contactInfo.onclick = invokeChallenge;
+    } else {
+        substituteContactInfo(contactInfoCookie)
+    }
 });
