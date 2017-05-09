@@ -1,5 +1,5 @@
 var CONTACT_INFO_COOKIE_NAME = "contactInfo";
-var RECAPTCHA_SITEKEY = "6LeRgiAUAAAAADyHra3UqyHvPvoXTWRItTz8a3Hj";
+var RECAPTCHA_SITEKEY = "6LfTiyAUAAAAAIQ8PneibS96RnG091Uya0kUfP6b";
 
 function invokeChallenge() {
     grecaptcha.render("contactInfoRecaptcha", {sitekey: RECAPTCHA_SITEKEY, size: "compact", callback: "onSuccessfulValidation"});
