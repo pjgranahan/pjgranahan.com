@@ -20,7 +20,7 @@ pygmentsCodeFencesGuessSyntax = true
   Github = "pjgranahan"
   Linkedin = "pjgranahan"
 
-  AuthorBio = "Working at Amazon. Rice University Alumnus."
+  AuthorBio = "Rice University Alumnus."
   Disclaimer = "Opinions are my own and not necessarily the views of my employer."
   
   GithubRepoUrl = "https://github.com/pjgranahan/pjgranahan.com"
